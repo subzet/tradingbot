@@ -1,7 +1,7 @@
 const cluster = require('cluster');
 const express = require('express');
-const binance = require('./api/handlers/binance')
-const investor = require('./api/handlers/investor')
+const binance = require('./src/handlers/binance')
+const investor = require('./src/handlers/investor')
 const app = express();
 
 
@@ -34,6 +34,17 @@ if (cluster.isMaster) {
 
     app.get('/investor', async function(req,res){
         const response = await investor.shouldInvest(req.query.strategy, req.query.pair, req.query.timeframe)
+        res.status(response.code).send(response)
+    })
+
+
+    app.post('/investor/start', async function(req,res){
+        const response = await investor.startInvestor(req.query.strategy, req.query.pair, req.query.timeframe)
+        res.status(response.code).send(response)
+    })
+
+    app.post('/investor/stopAll', async function(req,res){
+        const response = await investor.stopAll()
         res.status(response.code).send(response)
     })
 
