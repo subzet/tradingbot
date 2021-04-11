@@ -1,6 +1,8 @@
 const binance = require('../handlers/binance')
 const strategies = require('../services/strategies')
+const telegram = require('../utils/telegram')
 const config = require('../config/config')
+const moment = require('moment')
 
 class Trader{
     constructor(initialBalance, strategy, timeframe, pair) {
@@ -17,14 +19,17 @@ class Trader{
     }
     
     async start(){
-        console.log("Starting trader...")
+        telegram.sendMessage(`Bot started tracking prices for ${this.pair} at ${moment().format()}`)
+
         this.running = true
 
         while(this.running){
             try{
-                console.log(`Getting data from Binance for pair ${this.pair} and timeframe ${this.timeframe}`)
+                console.log(`${moment().format()} Getting data from Binance for pair ${this.pair} and timeframe ${this.timeframe}`)
                 const result = await this.shouldInvest(this.strategy,this.pair,this.timeframe)
                 console.log(`Strategy is in ${result ? 'true' : 'false'} zone..`)
+
+                //telegram.sendMessage(`Strategy is in ${result ? 'true' : 'false'} zone..`)
 
                 this.evaluations.push(result)
 
@@ -33,11 +38,15 @@ class Trader{
                     const lastEvaluation = this.evaluations[this.evaluations.length - 2]
 
                     if(currentEvaluation && !lastEvaluation){
-                        console.log("BUY SIGNAL!!")
+                        const msg = `${moment().format()} Buy Signal for ${this.pair}`
+                        console.log(msg)
+                        telegram.sendMessage(msg)
                     }
 
                     if(!currentEvaluation && lastEvaluation){
-                        console.log("SELL SIGNAL!!")
+                        const msg = `${moment().format()} Sell Signal for ${this.pair}`
+                        console.log(msg)
+                        telegram.sendMessage(msg)
                     }
                 }
             }catch(error){
@@ -61,7 +70,7 @@ class Trader{
     }
 
     stop(){
-        console.log("Stopping trader...")
+        telegram.sendMessage(`Bot stopped tracking prices for ${this.pair} at ${moment().format()}`)
         this.running = false
     }
 
