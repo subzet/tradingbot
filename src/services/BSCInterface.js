@@ -34,7 +34,7 @@ class BSCInterface {
 
     return await contract.methods
       .approve(this.routerContractAddress, amount)
-      .send({ from: this.wallet.Address, gas: 285000 });
+      .send({ from: this.wallet.address, gas: 285000 });
   }
 
   //Deposit BNB to it's wrapped BEP20 toke and get WBNB
@@ -45,7 +45,7 @@ class BSCInterface {
     ); // this is the WBNB contract
 
     return await contract.methods.deposit().send({
-      from: this.wallet.Address,
+      from: this.wallet.address,
       gas: 285000,
       value: amount,
     });
@@ -58,7 +58,7 @@ class BSCInterface {
         amount,
         miniOut,
         [tokenFrom, tokenTo],
-        this.wallet.Address, // my wallet
+        this.wallet.address, // my wallet
         Date.now() + 1000 * 60 * 10 // expire 10 minutes
       )
       .send({
