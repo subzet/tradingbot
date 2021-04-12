@@ -1,6 +1,7 @@
 const binance = require('./binance')
 const strategies = require('../services/strategies')
 const Trader = require('../services/trader')
+const Backtester = require('../services/backtest')
 
 const tradersRunning = []
 
@@ -33,4 +34,16 @@ const stopAll = async() => {
     return {code:200, msg: "Trader started!!"}
 }
 
-module.exports = {shouldInvest, startInvestor, stopAll}
+const backtest = async(strategy, pair, timeframe, initialBalance) => {
+    
+        const data = await binance.getPairCandles(pair,timeframe)
+        const backtester = new Backtester(data.candlesticks,strategy,initialBalance)
+
+        backtester.start()
+
+        return {code:200}   
+
+
+}
+
+module.exports = {shouldInvest, startInvestor, stopAll, backtest}

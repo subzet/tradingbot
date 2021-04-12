@@ -43,7 +43,7 @@ class Trader{
                         telegram.sendMessage(msg)
                     }
 
-                    if(!currentEvaluation && lastEvaluation){
+                    if(!currentEvaluation.condition && lastEvaluation.condition){
                         const msg = `${moment().format()} Sell Signal for ${this.pair} at ${currentEvaluation.latestTick.close}`
                         console.log(msg)
                         telegram.sendMessage(msg)

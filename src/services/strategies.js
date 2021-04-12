@@ -5,7 +5,12 @@ const strategies = {
         //Strategy config
         const short = 3
         const medium = 13
-        const large = 99 
+        const large = 99
+        
+        if (data.length < 100){
+            console.log("Not enough data to make a decision")
+            return {condition:false, latestTick: undefined}
+        }
 
         //data is supposed to be an array of timeframed ticks in ascendent with this
         //keys: time, open, high, low, close, volume, closeTime, assetVolume, trades, buyBaseVolume, buyAssetVolume, ignored
