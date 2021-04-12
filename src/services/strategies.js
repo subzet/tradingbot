@@ -17,7 +17,9 @@ const strategies = {
         const moving_average_large = parsedData.slice(0,large).reduce((sum, price) => (sum + parseFloat(price)),0) / large + 1
 
         console.log(`Last Price: ${parsedData[0]}Short: ${moving_average_short}, Medium: ${moving_average_medium}, Large: ${moving_average_large}`)
-        return moving_average_short >= moving_average_medium && moving_average_medium >= moving_average_large
+        const condition = moving_average_short >= moving_average_medium && moving_average_medium >= moving_average_large
+
+        return {condition, latestTick: data[data.length - 1]}
     }
 }
 

@@ -47,9 +47,9 @@ if (cluster.isMaster) {
         const response = await investor.stopAll()
         res.status(response.code).send(response)
     })
-
-    const server = app.listen(8080, function () {
-        const port = server.address().port;
+    
+    const server = app.listen(process.env.PORT || 8080, () => {
+        const { port } = server.address();
         console.log('TRADING APP listening at http://localhost:%s', port);
     });
 }

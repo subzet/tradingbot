@@ -27,8 +27,8 @@ class Trader{
             try{
                 console.log(`${moment().format()} Getting data from Binance for pair ${this.pair} and timeframe ${this.timeframe}`)
                 const result = await this.shouldInvest(this.strategy,this.pair,this.timeframe)
-                console.log(`Strategy is in ${result ? 'true' : 'false'} zone..`)
-
+                console.log(`Strategy is in ${result.condition ? 'true' : 'false'} zone.. ${JSON.stringify(result.latestTick)}`)
+                
                 //telegram.sendMessage(`Strategy is in ${result ? 'true' : 'false'} zone..`)
 
                 this.evaluations.push(result)
@@ -37,14 +37,14 @@ class Trader{
                     const currentEvaluation = this.evaluations[this.evaluations.length - 1]
                     const lastEvaluation = this.evaluations[this.evaluations.length - 2]
 
-                    if(currentEvaluation && !lastEvaluation){
-                        const msg = `${moment().format()} Buy Signal for ${this.pair}`
+                    if(currentEvaluation.condition && !lastEvaluation.condition){
+                        const msg = `${moment().format()} Buy Signal for ${this.pair} at ${currentEvaluation.latestTick.close}`
                         console.log(msg)
                         telegram.sendMessage(msg)
                     }
 
                     if(!currentEvaluation && lastEvaluation){
-                        const msg = `${moment().format()} Sell Signal for ${this.pair}`
+                        const msg = `${moment().format()} Sell Signal for ${this.pair} at ${currentEvaluation.latestTick.close}`
                         console.log(msg)
                         telegram.sendMessage(msg)
                     }
