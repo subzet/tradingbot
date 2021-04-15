@@ -5,6 +5,7 @@ const config = require('../config/config')
 const moment = require('moment')
 
 class Trader{
+    //Traders applies a strategy to a pair and does stuff.
     constructor(initialBalance, strategy, timeframe, pair) {
         this.balance = initialBalance
         this.strategy = strategy

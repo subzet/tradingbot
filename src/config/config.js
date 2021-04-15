@@ -17,5 +17,7 @@ config.set('DELAY_MAP',{
     '1d': BASE_DELAY * 60 * 24
 })
 
+config.set('chainUrl','https://bsc-dataseed1.binance.org:443')
+
 module.exports = config;
 
