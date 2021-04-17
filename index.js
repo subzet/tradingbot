@@ -103,7 +103,7 @@ if (cluster.isMaster) {
 
     //Telegram interface:
     bot.onText(/Hi/, (msg, match) => {
-        bot.sendMessage(msg.chat.id,"Thanks for using binance bot!")
+        bot.sendMessage(msg.chat.id,"Thanks for using binance bot, type /help to get started")
     })
 
     bot.onText(/Help/, (msg, match) => {
