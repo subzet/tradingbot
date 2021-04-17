@@ -4,7 +4,9 @@ const binance = require('./src/handlers/binance')
 const investor = require('./src/handlers/investor')
 const token = require('./src/handlers/token')
 const app = express();
+const { initializeApp } = require('./src/utils/firebase');
 
+initializeApp();
 
 app.use(express.json());
 
