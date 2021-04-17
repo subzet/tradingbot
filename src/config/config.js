@@ -19,5 +19,7 @@ config.set('DELAY_MAP',{
 
 config.set('chainUrl','https://bsc-dataseed1.binance.org:443')
 
+config.set('routerContractAddress','0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F')
+
 module.exports = config;
 

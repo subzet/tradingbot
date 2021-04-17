@@ -65,12 +65,31 @@ if (cluster.isMaster) {
         res.status(response.code).send(response)
     })
 
+    app.post('/bsc/token/track', async function(req,res){
+        if(!req.body.token){
+            res.status(404).send({msg:"Missing token parameter in body"})
+        }
+        const response = await token.startTracking(req.body.token, req.body.timeframe)
+
+        res.status(response.code).send(response)
+    })
+
     app.get('/bsc/token/balance', async function(req,res){
         if(!req.query.wallet){
-            res.status(404).send({msg:"Missing wallet query param"})
+            res.status(400).send({msg:"Missing wallet query param"})
         }
 
-        const response = await token.getBalance(req.query.contractAddress,req.query.wallet)
+        const response = await token.getBalance(req.query.token,req.query.wallet)
+
+        res.status(response.code).send(response)
+    })
+
+    app.get('/bsc/token/price', async function(req,res){
+        if(!req.query.token){
+            res.status(400).send({msg:"Missing token query param"})
+        }
+
+        const response = await token.getPrice(req.query.token)
 
         res.status(response.code).send(response)
     })

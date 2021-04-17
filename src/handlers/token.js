@@ -31,12 +31,7 @@ const addToken = async (contractAddress) => {
     try{
         const contract = await getTokenContract(contractAddress)
 
-        const token = {
-            name: await contract.methods.name().call({}),
-            symbol: await contract.methods.symbol().call({}),
-            contractAddress,
-            token:new Token(contract,routerContract, undefined)
-        }
+        const token = await new Token(contract,routerContract, undefined)
 
         tokens.push(token)
 
@@ -50,18 +45,37 @@ const getBalance = async (symbol,walletAddress) => {
     const token = getTokenBySymbol(symbol)
 
     if(token){
-        const balance = await token.token.getTokenBalance(walletAddress)
-        return {code:200, balance}
+        let balance = await token.getTokenBalance(walletAddress)
+
+        if(balance != "0"){
+            balance = [balance.slice(0,balance.length - token.decimals), balance.substring(balance.length - token.decimals, balance.length - 1)].join('.')
+        }
+        
+        return {code:200, balance: Number(balance)}
     }
 
     return {code:404, msg: "Did not found token, add it first."}   
 }
 
+const getPrice = async (symbol) => {
+    const token = getTokenBySymbol(symbol)
+
+    if(token){
+        if(!token.price){
+            return {code:500, msg:"Last Price is undefined, start tracking it first."}
+        }
+        
+        return {code:200, price: token.price}
+    }
+
+    return {code:404, msg: "Did not found token, add it first."}   
+} 
+
 const startTracking = async (symbol,timeframe) => {
     const token = getTokenBySymbol(symbol)
 
     if(token){
-        token.token.startTracking()
+        token.startTracking(timeframe)
         return {code:200, msg: "Token started tracking price"}
     }
 
@@ -72,8 +86,8 @@ const stopTracking = async (symbol) => {
     const token = getTokenBySymbol(symbol)
 
     if(token){
-        if(token.token.running){
-            token.token.stopTracking()
+        if(token.running){
+            token.stopTracking()
             return {code:200, msg: "Token stopped tracking price"}
         }else{
             return {code:400, msg: "Token was not running"}
@@ -83,4 +97,4 @@ const stopTracking = async (symbol) => {
     return {code:404, msg: "Did not found token, add it first."}
 }
 
-module.exports = {addToken, getBalance, startTracking, stopTracking}
+module.exports = {addToken, getBalance, getPrice, startTracking, stopTracking}
