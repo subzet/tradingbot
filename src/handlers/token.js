@@ -8,8 +8,6 @@ const config = require('../config/config')
 const web3 = new Web3(config.get('chainUrl'));
 const routerContract = new web3.eth.Contract(Router_ABI, config.get('routerContractAddress'));
 
-const referenceToken = "0xe9e7cea3dedca5984780bafc599bd69add087d56" //BUSD is hardcoded.
-
 //Represents storage (?)
 const tokens = []
 
@@ -19,36 +17,37 @@ const getTokenContract = async (contractAddress) => {
     if (!contract) throw new Error("Error contract not found");
 
     return contract;
-  }
+}
 
-const getToken = (contractAddress) => {
-    const token = tokens.filter(token => token.contractAddress === contractAddress)
+const getTokenBySymbol = (symbol) => {
+    const token = tokens.filter(token => token.symbol === symbol)
     
     if (token.length > 0) return token[0]
 
     return undefined
 }
 
-
 const addToken = async (contractAddress) => {
     try{
         const contract = await getTokenContract(contractAddress)
 
-        tokens.push({
+        const token = {
+            name: await contract.methods.name().call({}),
+            symbol: await contract.methods.symbol().call({}),
             contractAddress,
             token:new Token(contract,routerContract, undefined)
-        })
+        }
 
-        const symbol = await contract.methods.symbol().call({})
+        tokens.push(token)
 
-        return {code: 200, msg: `${symbol} added succesfully`}
+        return {code: 200, msg: `${token.symbol} added succesfully`}
     }catch(error){
         return {code:404, msg: error.message}
     }
 }
 
-const getBalance = async (contractAddress,walletAddress) => {
-    const token = getToken(contractAddress)
+const getBalance = async (symbol,walletAddress) => {
+    const token = getTokenBySymbol(symbol)
 
     if(token){
         const balance = await token.token.getTokenBalance(walletAddress)
@@ -58,8 +57,8 @@ const getBalance = async (contractAddress,walletAddress) => {
     return {code:404, msg: "Did not found token, add it first."}   
 }
 
-const startTracking = async (contractAddress,timeframe) => {
-    const token = getToken(contractAddress)
+const startTracking = async (symbol,timeframe) => {
+    const token = getTokenBySymbol(symbol)
 
     if(token){
         token.token.startTracking()
@@ -69,8 +68,8 @@ const startTracking = async (contractAddress,timeframe) => {
     return {code:404, msg: "Did not found token, add it first."}    
 }
 
-const stopTracking = async (contractAddress) => {
-    const token = getToken(contractAddress)
+const stopTracking = async (symbol) => {
+    const token = getTokenBySymbol(symbol)
 
     if(token){
         if(token.token.running){
