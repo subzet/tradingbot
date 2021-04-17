@@ -1,9 +1,16 @@
 const cluster = require('cluster');
 const express = require('express');
+
 const binance = require('./src/handlers/binance')
 const investor = require('./src/handlers/investor')
+// const telegram = require('./src/handlers/telegram')
+
 const token = require('./src/handlers/token')
+const { bot } = require('./src/utils/telegram')
+
 const app = express();
+
+
 
 
 app.use(express.json());
@@ -92,6 +99,46 @@ if (cluster.isMaster) {
         const response = await token.getPrice(req.query.token)
 
         res.status(response.code).send(response)
+    })
+
+    //Telegram interface:
+    bot.onText(/Hi/, (msg, match) => {
+        bot.sendMessage(msg.chat.id,"Thanks for using binance bot!")
+    })
+
+    bot.onText(/\/add/, async (msg) => {
+        const [,address] = msg.text.split(" ")
+        const response = await token.addToken(address)
+
+        bot.sendMessage(msg.chat.id, response.msg)
+    })
+
+    bot.onText(/\/track/, async (msg) => {
+        const [,tkn,timeframe] = msg.text.split(" ")
+        const response = await token.startTracking(tkn, timeframe)
+
+        bot.sendMessage(msg.chat.id, response.msg)
+    })
+
+    bot.onText(/\/stop/, async (msg) => {
+        const [,tkn] = msg.text.split(" ")
+        const response = await token.stopTracking(tkn)
+
+        bot.sendMessage(msg.chat.id, response.msg)
+    })
+
+    bot.onText(/\/balance/, async (msg) => {
+        const [,tkn,wallet] = msg.text.split(" ")
+        const response = await token.getBalance(tkn,wallet)
+
+        bot.sendMessage(msg.chat.id, response.balance)
+    })
+
+    bot.onText(/\/price/, async (msg) => {
+        const [,tkn] = msg.text.split(" ")
+        const response = await token.getPrice(tkn)
+
+        bot.sendMessage(msg.chat.id, JSON.stringify(response.price))
     })
 
     const server = app.listen(process.env.PORT || 8080, () => {
