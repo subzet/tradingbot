@@ -61,9 +61,7 @@ const getPrice = async (symbol) => {
     const token = getTokenBySymbol(symbol)
 
     if(token){
-        if(!token.price){
-            return {code:500, msg:"Last Price is undefined, start tracking it first."}
-        }
+        await token.refreshPrice()
         
         return {code:200, price: token.price}
     }
