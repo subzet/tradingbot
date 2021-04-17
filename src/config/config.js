@@ -21,13 +21,16 @@ config.set('chainUrl','https://bsc-dataseed1.binance.org:443')
 
 config.set('routerContractAddress','0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F')
 
-config.set('botTutorial',```
+config.set('botTutorial',`
 /add <token address> to add a token to your token list.
 /track <token symbol> <timeframe> to track token price in a certain timeframe.
 /stop <token symbol> to stop bot tracking prices for a symbol.
 /balance <token symbol> <wallet address> to get your wallet balance of a token, token must be in your token list first.
 /price <token symbol> returns token price in BUSD.
-```)
+`);
+
+
+
 
 module.exports = config;
 
