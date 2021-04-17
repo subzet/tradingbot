@@ -3,7 +3,7 @@ const express = require('express');
 
 const binance = require('./src/handlers/binance')
 const investor = require('./src/handlers/investor')
-// const telegram = require('./src/handlers/telegram')
+const config = require('./src/config/config')
 
 const token = require('./src/handlers/token')
 const { bot } = require('./src/utils/telegram')
@@ -104,6 +104,10 @@ if (cluster.isMaster) {
     //Telegram interface:
     bot.onText(/Hi/, (msg, match) => {
         bot.sendMessage(msg.chat.id,"Thanks for using binance bot!")
+    })
+
+    bot.onText(/Help/, (msg, match) => {
+        bot.sendMessage(msg.chat.id,config.get('botTutorial'))
     })
 
     bot.onText(/\/add/, async (msg) => {
